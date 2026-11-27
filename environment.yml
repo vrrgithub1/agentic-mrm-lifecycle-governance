@@ -1,0 +1,28 @@
+name: agentic-mrm-gov
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - git
+  - pip:
+      # Databricks & Agentic Runtime
+      - databricks-sdk>=0.38.0
+      - databricks-agents>=0.12.0
+      - databricks-vectorsearch>=0.40
+      - mlflow>=3.0.0
+      - langgraph>=0.2.50
+      - langchain-core>=0.3.20
+      - mcp>=1.1.0
+      # Telemetry & Data Validation
+      - opentelemetry-api>=1.28.0
+      - opentelemetry-sdk>=1.28.0
+      - pydantic>=2.9.0
+      - pyyaml>=6.0.2
+      # Local Testing, Linting & SQL Governance
+      - pytest>=8.3.0
+      - pytest-cov>=6.0.0
+      - ruff>=0.7.0
+      - sqlfluff>=3.2.0
+      - pre-commit>=4.0.0
