@@ -3,15 +3,16 @@
 -- Compliant with SR 11-7 / SR 26-2 Section III & NIST AI RMF GOVERN 1 / MAP 1
 -- ============================================================================
 
-CREATE SCHEMA IF NOT EXISTS IDENTIFIER(:mrm_catalog || '.mrm_inventory_' || :env_tier)
+CREATE SCHEMA IF NOT EXISTS IDENTIFIER(:mrm_catalog || '.mrm_inventory_' || :env_tier) -- noqa: LT01
 COMMENT 'SR 11-7 and NIST AI RMF Agentic Asset Inventory and Control Metadata';
 
 -- Master registry table capturing every agent, model, prompt, and MCP tool
-CREATE TABLE IF NOT EXISTS IDENTIFIER(
-    :mrm_catalog || '.mrm_inventory_' || :env_tier || '.agentic_asset_registry'
+CREATE TABLE IF NOT EXISTS IDENTIFIER( -- noqa: LT01
+    :mrm_catalog || '.mrm_inventory_' || :env_tier || '.agentic_asset_registry' -- noqa: LT01
 ) (
     asset_id STRING NOT NULL,
-    asset_type STRING NOT NULL COMMENT 'AGENT | FOUNDATION_MODEL | PROMPT | VECTOR_INDEX | MCP_SERVER',
+    asset_type STRING NOT NULL
+    COMMENT 'AGENT | FOUNDATION_MODEL | PROMPT | VECTOR_INDEX | MCP_SERVER',
     uc_securable_name STRING NOT NULL COMMENT 'Three-level Unity Catalog namespace path',
     asset_version STRING NOT NULL,
     mrm_tier STRING NOT NULL COMMENT 'tier_1_high | tier_2_medium | tier_3_low',
@@ -31,10 +32,9 @@ TBLPROPERTIES (
     'governance.framework' = 'SR11-7_NIST-AI-RMF'
 );
 
--- Seed baseline governed tag definitions (supported in Unity Catalog)
--- Note: On Databricks Free Edition, account-level tag policies execute via SQL warehouse
-CREATE TAG IF NOT EXISTS mrm_tier ALLOWED_VALUES ('tier_1_high', 'tier_2_medium', 'tier_3_low');
-CREATE TAG IF NOT EXISTS validation_status ALLOWED_VALUES (
-    'DRAFT', 'IN_CHALLENGE', 'APPROVED', 'REVOKED'
-);
-CREATE TAG IF NOT EXISTS nist_rmf_function ALLOWED_VALUES ('GOVERN', 'MAP', 'MEASURE', 'MANAGE');
+-- Seed baseline governed tag definitions (Unity Catalog DDL)
+CREATE TAG IF NOT EXISTS mrm_tier ALLOWED_VALUES ('tier_1_high', 'tier_2_medium', 'tier_3_low'); -- noqa: PRS
+CREATE TAG IF NOT EXISTS validation_status ALLOWED_VALUES ( -- noqa: PRS
+    'DRAFT', 'IN_CHALLENGE', 'APPROVED', 'REVOKED' -- noqa: PRS
+); -- noqa: PRS
+CREATE TAG IF NOT EXISTS nist_rmf_function ALLOWED_VALUES ('GOVERN', 'MAP', 'MEASURE', 'MANAGE'); -- noqa: PRS
