@@ -23,4 +23,4 @@ jobs:
       - name: Lint SQL with SQLFluff
         run: sqlfluff lint governance_policies src/data_vault
       - name: Run Unit Tests
-        run: pytest tests/unit --allow-empty
+        run: pytest tests/unit -v
