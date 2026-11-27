@@ -1,3 +1,17 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'background': '#ffffff',
+    'primaryColor': '#eef2ff',
+    'primaryTextColor': '#0f172a',
+    'primaryBorderColor': '#4f46e5',
+    'lineColor': '#1e293b',
+    'secondaryColor': '#f8fafc',
+    'tertiaryColor': '#f1f5f9',
+    'edgeLabelBackground': '#ffffff',
+    'fontFamily': 'Inter, Arial, sans-serif'
+  }
+}}%%
 flowchart TB
     subgraph REG["Regulatory & Risk Baselines"]
         SR["FRB SR 11-7 / SR 26-2<br/>(Inventory & Materiality Tiering)"]
@@ -23,4 +37,12 @@ flowchart TB
     end
 
     SCORER -->|Assigns Tier 1 / 2 / 3| REG_TBL
-    SCORER -->|Applies Metadata Tags| SECmateriality_scorer.py
+    SCORER -->|Applies Metadata Tags| SEC
+
+    %% Style subgraph containers with solid light fills & crisp borders
+    style REG fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#0f172a
+    style INTAKE fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#0f172a
+    style UC fill:#f8fafc,stroke:#64748b,stroke-width:2px,color:#0f172a
+
+    %% Thicken connector lines for mobile LinkedIn readability
+    linkStyle default stroke:#1e293b,stroke-width:2px

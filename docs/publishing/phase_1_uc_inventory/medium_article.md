@@ -12,34 +12,7 @@ To solve this, I am building **`agentic-mrm-lifecycle-governance`**—an open-so
 
 In **Phase 1 (Foundation & Unified Inventory)**, we establish the control plane bedrock: translating regulatory prose into machine-readable policy-as-code, automating inherent risk tiering, and registering every agentic component as a governed Unity Catalog securable.
 
-```mermaid
-flowchart TB
-    subgraph REG["Regulatory & Risk Baselines"]
-        SR["FRB SR 11-7 / SR 26-2<br/>(Inventory & Materiality Tiering)"]
-        NIST["NIST AI RMF 1.0 + GenAI Profile<br/>(GOVERN 1 & MAP 1)"]
-        YAML["sr11_7_nist_ai_rmf_mapping.yaml<br/>(Machine-Readable Control Crosswalk)"]
-        SR --> YAML
-        NIST --> YAML
-    end
-
-    subgraph INTAKE["Automated Risk Intake (CI / Pre-Registration)"]
-        Q["Agent Risk Questionnaire<br/>(Autonomy, Domain, PII/PCI, HITL)"]
-        SCORER["materiality_scorer.py<br/>(Deterministic 0–100 Inherent Risk)"]
-        Q --> SCORER
-        YAML -.->|Thresholds & Rules| SCORER
-    end
-
-    subgraph UC["Databricks Unity Catalog Control Plane"]
-        TAGS["Governed Tags<br/>mrm_tier | validation_status | nist_rmf_function"]
-        REG_TBL[("mrm_inventory.agentic_asset_registry<br/>(Delta Lake + Change Data Feed)")]
-        SEC["UC Registered Securables<br/>Agents | Foundation Models | Prompts | MCP Servers"]
-        TAGS --> REG_TBL
-        TAGS --> SEC
-    end
-
-    SCORER -->|Assigns Tier 1 / 2 / 3| REG_TBL
-    SCORER -->|Applies Metadata Tags| SEC
-```
+![Figure 1: Agentic model risk management control plane](diagram_control_plane.png)
 
 ---
 
