@@ -1,0 +1,54 @@
+bundle:
+  name: agentic-mrm-lifecycle-governance
+
+variables:
+  mrm_catalog:
+    description: Target Unity Catalog name (defaults to 'workspace' on Databricks Free Edition)
+    default: workspace
+  environment_tier:
+    description: Deployment stage identifier
+    default: dev
+
+resources:
+  schemas:
+    mrm_inventory:
+      name: mrm_inventory_${var.environment_tier}
+      catalog_name: ${var.mrm_catalog}
+      comment: "SR 11-7 / NIST AI RMF Agentic Asset Inventory & Governance Controls"
+    mrm_raw_vault:
+      name: mrm_raw_vault_${var.environment_tier}
+      catalog_name: ${var.mrm_catalog}
+      comment: "Immutable Data Vault 2.0 Raw Audit Layer (Hubs, Links, Satellites)"
+    mrm_business_vault:
+      name: mrm_business_vault_${var.environment_tier}
+      catalog_name: ${var.mrm_catalog}
+      comment: "Bitemporal PIT Tables & Regulatory Examiner Audit Marts"
+
+  jobs:
+    phase1_bootstrap_governance:
+      name: "[${var.environment_tier}] MRM Phase 1 - Bootstrap Inventory & Taxonomy"
+      tasks:
+        - task_key: apply_governed_tags_and_inventory
+          sql_task:
+            file:
+              path: ./governance_policies/unity_catalog/governed_tags.sql
+            warehouse_id: ${var.warehouse_id}
+          parameters:
+            mrm_catalog: ${var.mrm_catalog}
+            env_tier: ${var.environment_tier}
+
+targets:
+  dev:
+    mode: development
+    default: true
+    variables:
+      mrm_catalog: workspace
+      environment_tier: dev
+      warehouse_id: "REPLACE_WITH_YOUR_FREE_EDITION_SQL_WAREHOUSE_ID"
+
+  prod:
+    mode: production
+    variables:
+      mrm_catalog: workspace
+      environment_tier: prod
+      warehouse_id: "REPLACE_WITH_YOUR_FREE_EDITION_SQL_WAREHOUSE_ID"
