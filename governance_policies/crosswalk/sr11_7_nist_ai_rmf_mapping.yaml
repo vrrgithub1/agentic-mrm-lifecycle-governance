@@ -1,0 +1,59 @@
+framework_version: "1.0.0"
+effective_date: "2026-11-27"
+regulatory_baselines:
+  - id: "FRB-SR-11-7"
+    title: "Supervisory Guidance on Model Risk Management"
+  - id: "FRB-SR-26-2"
+    title: "Supervisory Expectations for AI and Dynamic Autonomous Systems"
+  - id: "NIST-AI-RMF-1.0"
+    title: "NIST Artificial Intelligence Risk Management Framework & GenAI Profile"
+
+materiality_tiers:
+  tier_1_high:
+    description: "Autonomous customer-facing decisions, credit/underwriting, AML/BSA, or write-capable MCP tools."
+    requires_independent_challenge: true
+    requires_hitl_approval: true
+    max_hallucination_rate: 0.01
+    revalidation_cadence_days: 90
+  tier_2_medium:
+    description: "Internal advisory copilots, RAG over regulated policies, read-only financial data MCP tools."
+    requires_independent_challenge: true
+    requires_hitl_approval: false
+    max_hallucination_rate: 0.03
+    revalidation_cadence_days: 180
+  tier_3_low:
+    description: "Internal developer productivity, non-regulated summarization, no sensitive PII/PCI access."
+    requires_independent_challenge: false
+    requires_hitl_approval: false
+    max_hallucination_rate: 0.05
+    revalidation_cadence_days: 365
+
+controls:
+  - control_id: "MRM-INV-001"
+    sr11_7_ref: "Section III (Model Inventory & Documentation)"
+    nist_rmf_ref: "GOVERN 1.2 / MAP 1.1"
+    control_objective: "Every foundation model, prompt version, vector index, and MCP tool must be cataloged with owner and materiality tier."
+    technical_enforcement: "Unity Catalog Governed Tags (mrm_tier, nist_risk_profile, owner_principal)"
+    dv2_audit_tables: ["HUB_AGENT_SYSTEM", "SAT_AGENT_RISK_PROFILE"]
+
+  - control_id: "MRM-VAL-002"
+    sr11_7_ref: "Section V (Validation & Effective Challenge)"
+    nist_rmf_ref: "MEASURE 2.1 / MEASURE 2.6"
+    control_objective: "Tier 1 and Tier 2 agents cannot receive @Champion alias without independent validator cryptographic sign-off."
+    technical_enforcement: "UC Metastore ABAC DENY Policy + MLflow 3.0 Evaluation Gate"
+    dv2_audit_tables: ["HUB_VALIDATION_RUN", "LNK_VALIDATION_APPROVAL", "SAT_EFFECTIVE_CHALLENGE"]
+
+  - control_id: "MRM-RUN-003"
+    sr11_7_ref: "Section IV (Use & Runtime Guardrails)"
+    nist_rmf_ref: "MANAGE 2.2 / MANAGE 4.1"
+    control_objective: "All model calls and MCP tool executions must pass through Unity Gateway PII/injection filters and emit OTel traces."
+    technical_enforcement: "Unity Gateway Service Policies + MCP Tool Allowlists"
+    dv2_audit_tables: ["HUB_EXECUTION_TRACE", "LNK_AGENT_EXECUTION", "SAT_TRACE_TELEMETRY"]
+
+  - control_id: "MRM-MON-004"
+    sr11_7_ref: "Section VI (Ongoing Monitoring & Outcomes Analysis)"
+    nist_rmf_ref: "MEASURE 2.4 / MANAGE 4.2"
+    control_objective: "Automated circuit breaker revokes UC execution grants when production drift or guardrail breaches exceed tier threshold."
+    technical_enforcement: "Lakehouse Monitoring + circuit_breaker.py"
+    dv2_audit_tables: ["SAT_DRIFT_TELEMETRY", "PIT_AGENT_GOVERNANCE_STATE"]
+    
